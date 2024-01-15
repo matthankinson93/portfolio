@@ -1,0 +1,1518 @@
+<!-- 
+    THIS VERSION RUNS THE AUTO RE-RENDERING GAUGES AND CONTAINERS FOR EACH KEG.
+    THIS ALSO USES API CALLS => BLYNK IOT FOR ESP32 VALUES. AS THIS CODE CAN BE REPLACED
+    WITH EMBEDDED SERVER CODE TO NEGATE THE NEED FOR BLYNK API. TO REMOVE THE GAUGES, SET GAUGE DIV TO DISPLAY:NONE.
+-->
+
+<!-- 
+    THIS VERSION CONTAINS ALL SCRIPT AND STYLE. NO EXTERNAL LINKS REQUIRED, ONLY BOOTSTRAP AND JQUERY CDN.
+ -->
+
+<!-- 
+    THERE IS NO BACK-END FOR THIS WEB APP, IT USES LOCAL BROSWER STORAGE. THIS KEEPS COSTS FREE, HOWEVER IT MEANS
+    THAT THE USER INPUT INFO IS NOT TRANSFERABLE BETWEEN DEVICES. THIS IS MEANT TO BE KEPT ON ONE DEVICE (I.E A SMART TV) OR TABLET
+    THAT DOES NOT LEAVE THE BREWERY/BAR/ENTERTAINMENT AREA.
+  -->
+
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @media only screen and (max-width: 500px) {
+
+            p,
+            h4,
+            img,
+            button {
+                font-size: 0.7rem;
+            }
+
+            #loadingdiv {
+                margin-top: 30%;
+                width: 100%;
+            }
+
+            #loadingimg {
+                margin-top: 30%;
+                width: 100%;
+            }
+
+            canvas {
+                width: 0.5rem;
+            }
+
+        }
+
+        #loadingdiv {
+            margin-top: 3%;
+        }
+
+        #loadingimg {
+            width: 70%;
+        }
+
+        #gauge1>div {
+            height: 30px;
+        }
+
+        #gauge1>canvas {
+            height: 30px;
+        }
+
+        body {
+            background-color: #241e1e;
+            background-image: url("hops.jpg");
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            font-family: 'Oswald', sans-serif;
+        }
+
+        h1 {
+            color: #f6c101;
+        }
+
+        h2 {
+            background-color: rgba(0, 0, 0, 1);
+            color: #f6c101;
+        }
+
+        .keg {
+            background-color: rgba(0, 0, 0, 0.5);
+            height: 19%;
+        }
+
+        .beer_img {
+            height: 112%;
+        }
+
+        button:hover {
+            opacity: 0.6;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <!-- Heading -->
+    <div class="container-fluid bg-transparent mb-2">
+        <h1 id="title" contenteditable="false">Enter a brewery name</h1>
+    </div>
+
+    <!-- LOADING ANIMATION -->
+    <div class="loading">
+        <div class="container align-middle" id="loadingdiv">
+            <img src="ber2.gif" class="img-fluid rounded loading" id="loadingimg">
+        </div>
+        <div class="container-fluid bg-transparent">
+            <h4 class="text-white mt-2">Loading......</h4>
+        </div>
+    </div>
+
+    <!-- Keg 1 -->
+    <div class="keg container mb-3 p-0 align-middle rounded" id="keg1">
+        <div class="row m-0 w-100">
+            <h2 class="p-0 w-100" id="keg1title" contenteditable="false">Enter a title</h2>
+        </div>
+        <div class="row h-50">
+            <div class="col" id="keg1_style_cont">
+                <select name="keg1_style" id="keg1_style" class="">
+                    <option value="1">Pale</option>
+                    <option value="2">Amber</option>
+                    <option value="3">Stout</option>
+                    <option value="4">Neipa</option>
+                    <option value="5">Seltzer</option>
+                </select>
+            </div>
+            <div class="col">
+                <img src="lager.png" alt="" class="beer_img m-0" id="keg1_icon">
+            </div>
+            <div class="col h-25">
+                <h4 class="text-white m-0 font-weight-bold" id="keg1_abv" contenteditable=false">Enter a style and ABV
+                </h4>
+                <p class="text-white mb-3 font-italic" id="keg1_exp" contenteditable="false">Enter a description
+                </p>
+            </div>
+            <div class="col h-25">
+                <p class="text-white mb-3 font-italic" id="keg1_ing" contenteditable="false">Enter ingredients</p>
+            </div>
+            <!-- Set this to display none if required -->
+            <div class="col h-25">
+                <div id="gauge1" class="mb-2 gaugediv"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keg 2 -->
+    <div class=" keg container mb-3 p-0 align-middle rounded" id="keg2">
+        <div class="row m-0 w-100">
+            <h2 class="p-0 w-100" id="keg2title" contenteditable="false">Enter a title</h2>
+        </div>
+        <div class="row h-50">
+            <div class="col" id="keg2_style_cont">
+                <select name="keg2_style" id="keg2_style" class="mb-1">
+                    <option value="1">Pale</option>
+                    <option value="2">Amber</option>
+                    <option value="3">Stout</option>
+                    <option value="4">Neipa</option>
+                    <option value="5">Seltzer</option>
+                </select>
+            </div>
+            <div class="col">
+                <img src="lager.png" alt="" class="beer_img m-0" id="keg2_icon">
+            </div>
+            <div class="col h-25">
+                <h4 class="text-white m-0 font-weight-bold" id="keg2_abv" contenteditable="false">Enter a style and ABV
+                </h4>
+                <p class="text-white mb-3" id="keg2_exp" contenteditable="false">Enter a description</p>
+            </div>
+            <div class="col h-25">
+                <p class="text-white mb-3 font-italic" id="keg2_ing" contenteditable="false">Enter ingredients</p>
+            </div>
+            <!-- Set this to display none if required -->
+            <div class="col h-25">
+                <div id="gauge2" class="mb-2 gaugediv"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keg 3 -->
+    <div class="keg container mb-3 p-0 align-middle rounded" id="keg3">
+        <div class="row m-0 w-100">
+            <h2 class="p-0 w-100" id="keg3title" contenteditable="false">Enter a title</h2>
+        </div>
+        <div class="row h-50">
+            <div class="col" id="keg3_style_cont">
+                <select name="keg3_style" id="keg3_style" class="mb-1">
+                    <option value="1">Pale</option>
+                    <option value="2">Amber</option>
+                    <option value="3">Stout</option>
+                    <option value="4">Neipa</option>
+                    <option value="5">Seltzer</option>
+                </select>
+            </div>
+            <div class="col">
+                <img src="lager.png" alt="" class="beer_img m-0" id="keg3_icon">
+            </div>
+            <div class="col h-25">
+                <h4 class="text-white m-0 font-weight-bold" id="keg3_abv" contenteditable="false">Enter a style and ABV
+                </h4>
+                <p class="text-white mb-3" id="keg3_exp" contenteditable="false">Enter a descritpion
+                </p>
+            </div>
+            <div class="col h-25">
+                <p class="text-white mb-3 font-italic" id="keg3_ing" contenteditable="false">Enter ingredients</p>
+            </div>
+            <!-- Set this to display none if required -->
+            <div class="col h-25">
+                <div id="gauge3" class="mb-2 gaugediv"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Keg 4 -->
+    <div class="keg container mb-2 p-0 align-middle rounded" id="keg4">
+        <div class="row m-0 w-100">
+            <h2 class="p-0 w-100" id="keg4title" contenteditable="false">Enter a title</h2>
+        </div>
+        <div class="row h-50">
+            <div class="col" id="keg4_style_cont">
+                <select name="keg4_style" id="keg4_style" class="mb-1">
+                    <option value="1">Pale</option>
+                    <option value="2">Amber</option>
+                    <option value="3">Stout</option>
+                    <option value="4">Neipa</option>
+                    <option value="5">Seltzer</option>
+                </select>
+            </div>
+            <div class="col">
+                <img src="lager.png" alt="" class="beer_img m-0" id="keg4_icon">
+            </div>
+            <div class="col h-25">
+                <h4 class="text-white m-0 font-weight-bold" id="keg4_abv" contenteditable="false">Enter a style and ABV
+                </h4>
+                <p class="text-white mb-3" id="keg4_exp" contenteditable="false">Enter a descritpion
+                </p>
+            </div>
+            <div class="col h-25">
+                <p class="text-white mb-3 font-italic" id="keg4_ing" contenteditable="false">Enter ingredients</p>
+            </div>
+            <!-- Set this to display none if required -->
+            <div class="col h-25">
+                <div id="gauge4" class="mb-2 gaugediv"></div>
+            </div>
+        </div>
+    </div>
+    <label for="kegnum" id="kegnum_label" class="text-white">Number of taps: </label>
+    <select name="kegnum" id="kegnum" class="mb-1">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+    </select>
+    <button class=" text-white rounded btn btn-warning" id="Edit">Edit Taps</button>
+    <button class=" text-white rounded btn btn-warning" id="Save">Save</button>
+    <!-- Gauge library -->
+    <script>
+        (function (root, factory) {
+
+            if ((typeof define === 'function') && define.amd) {
+                /* AMD. Register as an anonymous module. */
+                define([], factory);
+            } else if ((typeof module === 'object') && module.exports) {
+                module.exports = factory();
+            } else {
+                root.pureknob = factory();
+            }
+
+        }(typeof self !== 'undefined' ? self : this, function () {
+
+            function PureKnob() {
+
+                this.createKnob = function (width, height) {
+                    const heightString = height.toString();
+                    const widthString = width.toString();
+                    const smaller = width < height ? width : height;
+                    const fontSize = 0.2 * smaller;
+                    const fontSizeString = fontSize.toString();
+                    const canvas = document.createElement('canvas');
+                    const div = document.createElement('div');
+
+                    div.style.display = 'inline-block';
+                    div.style.height = heightString + 'px';
+                    div.style.position = 'relative';
+                    div.style.textAlign = 'center';
+                    div.style.width = widthString + 'px';
+                    div.appendChild(canvas);
+
+                    const input = document.createElement('input');
+                    input.style.appearance = 'textfield';
+                    input.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    input.style.border = 'none';
+                    input.style.color = '#ff8800';
+                    input.style.fontFamily = 'sans-serif';
+                    input.style.fontSize = fontSizeString + 'px';
+                    input.style.height = heightString + 'px';
+                    input.style.margin = 'auto';
+                    input.style.padding = '0px';
+                    input.style.textAlign = 'center';
+                    input.style.width = widthString + 'px';
+
+                    const inputMode = document.createAttribute('inputmode');
+                    inputMode.value = 'numeric';
+                    input.setAttributeNode(inputMode);
+
+                    const inputDiv = document.createElement('div');
+                    inputDiv.style.bottom = '0px';
+                    inputDiv.style.display = 'none';
+                    inputDiv.style.left = '0px';
+                    inputDiv.style.position = 'absolute';
+                    inputDiv.style.right = '0px';
+                    inputDiv.style.top = '0px';
+                    inputDiv.appendChild(input);
+                    div.appendChild(inputDiv);
+
+                    /*
+                     * The knob object.
+                     */
+                    const knob = {
+                        '_canvas': canvas,
+                        '_div': div,
+                        '_height': height,
+                        '_input': input,
+                        '_inputDiv': inputDiv,
+                        '_listeners': [],
+                        '_mousebutton': false,
+                        '_previousVal': 0,
+                        '_timeout': null,
+                        '_timeoutDoubleTap': null,
+                        '_touchCount': 0,
+                        '_width': width,
+
+                        /*
+                         * Notify listeners about value changes.
+                         */
+                        '_notifyUpdate': function () {
+                            const properties = this._properties;
+                            const value = properties.val;
+                            const listeners = this._listeners;
+                            const numListeners = listeners.length;
+
+                            /*
+                             * Call all listeners.
+                             */
+                            for (let i = 0; i < numListeners; i++) {
+                                const listener = listeners[i];
+
+                                /*
+                                 * Call listener, if it exists.
+                                 */
+                                if (listener !== null) {
+                                    listener(this, value);
+                                }
+
+                            }
+
+                        },
+
+                        /*
+                         * Properties of this knob.
+                         */
+                        '_properties': {
+                            'angleEnd': 2.0 * Math.PI,
+                            'angleOffset': 1, // -0.5 * Math.PI
+                            'angleStart': 1.2,
+                            'colorBG': '#181818',
+                            'colorFG': '#ffffff',
+                            'colorLabel': '#ffffff',
+                            'fnStringToValue': function (string) { return parseInt(string); },
+                            'fnValueToString': function (value) { return value.toString(); },
+                            'label': "%",
+                            'needle': false,
+                            'readonly': true,
+                            'textScale': 1,
+                            'trackWidth': 0.4,
+                            'valMin': 0,
+                            'valMax': 100,
+                            'val': 0
+                        },
+
+                        /*
+                         * Abort value change, restoring the previous value.
+                         */
+                        'abort': function () {
+                            const previousValue = this._previousVal;
+                            const properties = this._properties;
+                            properties.val = previousValue;
+                            this.redraw();
+                        },
+
+                        /*
+                         * Adds an event listener.
+                         */
+                        'addListener': function (listener) {
+                            const listeners = this._listeners;
+                            listeners.push(listener);
+                        },
+
+                        /*
+                         * Commit value, indicating that it is no longer temporary.
+                         */
+                        'commit': function () {
+                            const properties = this._properties;
+                            const value = properties.val;
+                            this._previousVal = value;
+                            this.redraw();
+                            this._notifyUpdate();
+                        },
+
+                        /*
+                         * Returns the value of a property of this knob.
+                         */
+                        'getProperty': function (key) {
+                            const properties = this._properties;
+                            const value = properties[key];
+                            return value;
+                        },
+
+                        /*
+                         * Returns the current value of the knob.
+                         */
+                        'getValue': function () {
+                            const properties = this._properties;
+                            const value = properties.val;
+                            return value;
+                        },
+
+                        /*
+                         * Return the DOM node representing this knob.
+                         */
+                        'node': function () {
+                            const div = this._div;
+                            return div;
+                        },
+
+                        /*
+                         * Redraw the knob on the canvas.
+                         */
+                        'redraw': function () {
+                            this.resize();
+                            const properties = this._properties;
+                            const needle = properties.needle;
+                            const angleStart = properties.angleStart;
+                            const angleOffset = properties.angleOffset;
+                            const angleEnd = properties.angleEnd;
+                            const actualStart = angleStart + angleOffset;
+                            const actualEnd = angleEnd + angleOffset;
+                            const label = properties.label;
+                            const value = properties.val;
+                            const valueToString = properties.fnValueToString;
+                            const valueStr = valueToString(value);
+                            const valMin = properties.valMin;
+                            const valMax = properties.valMax;
+                            const relValue = (value - valMin) / (valMax - valMin);
+                            const relAngle = relValue * (angleEnd - angleStart);
+                            const angleVal = actualStart + relAngle;
+                            const colorTrack = properties.colorBG;
+                            const colorFilling = properties.colorFG;
+                            const colorLabel = properties.colorLabel;
+                            const textScale = properties.textScale;
+                            const trackWidth = properties.trackWidth;
+                            const height = this._height;
+                            const width = this._width;
+                            const smaller = width < height ? width : height;
+                            const centerX = 0.5 * width;
+                            const centerY = 0.5 * height;
+                            const radius = 0.4 * smaller;
+                            const labelY = centerY + radius;
+                            const lineWidth = Math.round(trackWidth * radius);
+                            const labelSize = Math.round(0.8 * lineWidth);
+                            const labelSizeString = labelSize.toString();
+                            const fontSize = (0.2 * smaller) * textScale;
+                            const fontSizeString = fontSize.toString();
+                            const canvas = this._canvas;
+                            const ctx = canvas.getContext('2d');
+
+                            /*
+                             * Clear the canvas.
+                             */
+                            ctx.clearRect(0, 0, width, height);
+
+                            /*
+                             * Draw the track.
+                             */
+                            ctx.beginPath();
+                            ctx.arc(centerX, centerY, radius, actualStart, actualEnd);
+                            ctx.lineCap = 'butt';
+                            ctx.lineWidth = lineWidth;
+                            ctx.strokeStyle = colorTrack;
+                            ctx.stroke();
+
+                            /*
+                             * Draw the filling.
+                             */
+                            ctx.beginPath();
+
+                            /*
+                             * Check if we're in needle mode.
+                             */
+                            if (needle) {
+                                ctx.arc(centerX, centerY, radius, angleVal - 0.1, angleVal + 0.1);
+                            } else {
+                                ctx.arc(centerX, centerY, radius, actualStart, angleVal);
+                            }
+
+                            ctx.lineCap = 'butt';
+                            ctx.lineWidth = lineWidth;
+                            ctx.strokeStyle = colorFilling;
+                            ctx.stroke();
+
+                            /*
+                             * Draw the number.
+                             */
+                            ctx.font = fontSizeString + 'px sans-serif';
+                            ctx.fillStyle = colorFilling;
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText(valueStr, centerX, centerY);
+
+                            /*
+                             * Draw the label
+                             */
+                            if (label !== null) {
+                                ctx.font = labelSizeString + 'px sans-serif';
+                                ctx.fillStyle = colorLabel;
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'middle';
+                                ctx.fillText(label, centerX, labelY);
+                            }
+
+                            /*
+                             * Set the color and font size of the input element.
+                             */
+                            const elemInput = this._input;
+                            elemInput.style.color = colorFilling;
+                            elemInput.style.fontSize = fontSizeString + 'px';
+                        },
+
+                        /*
+                         * This is called as the canvas or the surrounding DIV is resized.
+                         */
+                        'resize': function () {
+                            const canvas = this._canvas;
+                            const ctx = canvas.getContext('2d');
+                            const scale = window.devicePixelRatio;
+                            canvas.style.height = this._height + 'px';
+                            canvas.style.width = this._width + 'px';
+                            canvas.height = Math.floor(this._height * scale);
+                            canvas.width = Math.floor(this._width * scale);
+                            ctx.scale(scale, scale);
+                        },
+
+                        /*
+                         * Sets the value of a property of this knob.
+                         */
+                        'setProperty': function (key, value) {
+                            this._properties[key] = value;
+                            this.redraw();
+                        },
+
+                        /*
+                         * Sets the value of this knob.
+                         */
+                        'setValue': function (value) {
+                            this.setValueFloating(value);
+                            this.commit();
+                        },
+
+                        /*
+                         * Sets floating (temporary) value of this knob.
+                         */
+                        'setValueFloating': function (value) {
+                            const properties = this._properties;
+                            const valMin = properties.valMin;
+                            const valMax = properties.valMax;
+
+                            /*
+                             * Clamp the actual value into the [valMin; valMax] range.
+                             */
+                            if (value < valMin) {
+                                value = valMin;
+                            } else if (value > valMax) {
+                                value = valMax;
+                            }
+
+                            value = Math.round(value);
+                            this.setProperty('val', value);
+                        }
+
+                    };
+
+                    /*
+                     * Convert mouse event to value.
+                     */
+                    const mouseEventToValue = function (e, properties) {
+                        const canvas = e.target;
+                        const width = canvas.scrollWidth;
+                        const height = canvas.scrollHeight;
+                        const centerX = 0.5 * width;
+                        const centerY = 0.5 * height;
+                        const x = e.offsetX;
+                        const y = e.offsetY;
+                        const relX = x - centerX;
+                        const relY = y - centerY;
+                        const angleStart = properties.angleStart;
+                        const angleEnd = properties.angleEnd;
+                        const angleDiff = angleEnd - angleStart;
+                        let angle = Math.atan2(relX, -relY) - angleStart;
+                        const twoPi = 2.0 * Math.PI;
+
+                        /*
+                         * Make negative angles positive.
+                         */
+                        if (angle < 0) {
+
+                            if (angleDiff >= twoPi) {
+                                angle += twoPi;
+                            } else {
+                                angle = 0;
+                            }
+
+                        }
+
+                        const valMin = properties.valMin;
+                        const valMax = properties.valMax;
+                        let value = ((angle / angleDiff) * (valMax - valMin)) + valMin;
+
+                        /*
+                         * Clamp values into valid interval.
+                         */
+                        if (value < valMin) {
+                            value = valMin;
+                        } else if (value > valMax) {
+                            value = valMax;
+                        }
+
+                        return value;
+                    };
+
+                    /*
+                     * Convert touch event to value.
+                     */
+                    const touchEventToValue = function (e, properties) {
+                        const canvas = e.target;
+                        const rect = canvas.getBoundingClientRect();
+                        const offsetX = rect.left;
+                        const offsetY = rect.top;
+                        const width = canvas.scrollWidth;
+                        const height = canvas.scrollHeight;
+                        const centerX = 0.5 * width;
+                        const centerY = 0.5 * height;
+                        const touches = e.targetTouches;
+                        let touch = null;
+
+                        /*
+                         * If there are touches, extract the first one.
+                         */
+                        if (touches.length > 0) {
+                            touch = touches.item(0);
+                        }
+
+                        let x = 0.0;
+                        let y = 0.0;
+
+                        /*
+                         * If a touch was extracted, calculate coordinates relative to
+                         * the element position.
+                         */
+                        if (touch !== null) {
+                            const touchX = touch.clientX;
+                            x = touchX - offsetX;
+                            const touchY = touch.clientY;
+                            y = touchY - offsetY;
+                        }
+
+                        const relX = x - centerX;
+                        const relY = y - centerY;
+                        const angleStart = properties.angleStart;
+                        const angleEnd = properties.angleEnd;
+                        const angleDiff = angleEnd - angleStart;
+                        const twoPi = 2.0 * Math.PI;
+                        let angle = Math.atan2(relX, -relY) - angleStart;
+
+                        /*
+                         * Make negative angles positive.
+                         */
+                        if (angle < 0) {
+
+                            if (angleDiff >= twoPi) {
+                                angle += twoPi;
+                            } else {
+                                angle = 0;
+                            }
+
+                        }
+
+                        const valMin = properties.valMin;
+                        const valMax = properties.valMax;
+                        let value = ((angle / angleDiff) * (valMax - valMin)) + valMin;
+
+                        /*
+                         * Clamp values into valid interval.
+                         */
+                        if (value < valMin) {
+                            value = valMin;
+                        } else if (value > valMax) {
+                            value = valMax;
+                        }
+
+                        return value;
+                    };
+
+                    /*
+                     * Show input element on double click.
+                     */
+                    const doubleClickListener = function (e) {
+                        const properties = knob._properties;
+                        const readonly = properties.readonly;
+
+                        /*
+                         * If knob is not read-only, display input element.
+                         */
+                        if (!readonly) {
+                            e.preventDefault();
+                            const inputDiv = knob._inputDiv;
+                            inputDiv.style.display = 'block';
+                            const inputElem = knob._input;
+                            inputElem.focus();
+                            knob.redraw();
+                        }
+
+                    };
+
+                    /*
+                     * This is called when the mouse button is depressed.
+                     */
+                    const mouseDownListener = function (e) {
+                        const btn = e.buttons;
+
+                        /*
+                         * It is a left-click.
+                         */
+                        if (btn === 1) {
+                            const properties = knob._properties;
+                            const readonly = properties.readonly;
+
+                            /*
+                             * If knob is not read-only, process mouse event.
+                             */
+                            if (!readonly) {
+                                e.preventDefault();
+                                const val = mouseEventToValue(e, properties);
+                                knob.setValueFloating(val);
+                            }
+
+                            knob._mousebutton = true;
+                        }
+
+                        /*
+                         * It is a middle click.
+                         */
+                        if (btn === 4) {
+                            const properties = knob._properties;
+                            const readonly = properties.readonly;
+
+                            /*
+                             * If knob is not read-only, display input element.
+                             */
+                            if (!readonly) {
+                                e.preventDefault();
+                                const inputDiv = knob._inputDiv;
+                                inputDiv.style.display = 'block';
+                                const inputElem = knob._input;
+                                inputElem.focus();
+                                knob.redraw();
+                            }
+
+                        }
+
+                    };
+
+                    /*
+                     * This is called when the mouse cursor is moved.
+                     */
+                    const mouseMoveListener = function (e) {
+                        const btn = knob._mousebutton;
+
+                        /*
+                         * Only process event, if mouse button is depressed.
+                         */
+                        if (btn) {
+                            const properties = knob._properties;
+                            const readonly = properties.readonly;
+
+                            /*
+                             * If knob is not read-only, process mouse event.
+                             */
+                            if (!readonly) {
+                                e.preventDefault();
+                                const val = mouseEventToValue(e, properties);
+                                knob.setValueFloating(val);
+                            }
+
+                        }
+
+                    };
+
+                    /*
+                     * This is called when the mouse button is released.
+                     */
+                    const mouseUpListener = function (e) {
+                        const btn = knob._mousebutton;
+
+                        /*
+                         * Only process event, if mouse button was depressed.
+                         */
+                        if (btn) {
+                            const properties = knob._properties;
+                            const readonly = properties.readonly;
+
+                            /*
+                             * If knob is not read only, process mouse event.
+                             */
+                            if (!readonly) {
+                                e.preventDefault();
+                                const val = mouseEventToValue(e, properties);
+                                knob.setValue(val);
+                            }
+
+                        }
+
+                        knob._mousebutton = false;
+                    };
+
+                    /*
+                     * This is called when the drag action is canceled.
+                     */
+                    const mouseCancelListener = function (e) {
+                        const btn = knob._mousebutton;
+
+                        /*
+                         * Abort action if mouse button was depressed.
+                         */
+                        if (btn) {
+                            knob.abort();
+                            knob._mousebutton = false;
+                        }
+
+                    };
+
+                    /*
+                     * This is called when a user touches the element.
+                     */
+                    const touchStartListener = function (e) {
+                        const properties = knob._properties;
+                        const readonly = properties.readonly;
+
+                        /*
+                         * If knob is not read-only, process touch event.
+                         */
+                        if (!readonly) {
+                            const touches = e.targetTouches;
+                            const numTouches = touches.length;
+                            const singleTouch = (numTouches === 1);
+
+                            /*
+                             * Only process single touches, not multi-touch
+                             * gestures.
+                             */
+                            if (singleTouch) {
+                                knob._mousebutton = true;
+
+                                /*
+                                 * If this is the first touch, bind double tap
+                                 * interval.
+                                 */
+                                if (knob._touchCount === 0) {
+
+                                    /*
+                                     * This is executed when the double tap
+                                     * interval times out.
+                                     */
+                                    const f = function () {
+
+                                        /*
+                                         * If control was tapped exactly
+                                         * twice, enable on-screen keyboard.
+                                         */
+                                        if (knob._touchCount === 2) {
+                                            const properties = knob._properties;
+                                            const readonly = properties.readonly;
+
+                                            /*
+                                             * If knob is not read-only,
+                                             * display input element.
+                                             */
+                                            if (!readonly) {
+                                                e.preventDefault();
+                                                const inputDiv = knob._inputDiv;
+                                                inputDiv.style.display = 'block';
+                                                const inputElem = knob._input;
+                                                inputElem.focus();
+                                                knob.redraw();
+                                            }
+
+                                        }
+
+                                        knob._touchCount = 0;
+                                    };
+
+                                    let timeout = knob._timeoutDoubleTap;
+                                    window.clearTimeout(timeout);
+                                    timeout = window.setTimeout(f, 500);
+                                    knob._timeoutDoubleTap = timeout;
+                                }
+
+                                knob._touchCount++;
+                                const val = touchEventToValue(e, properties);
+                                knob.setValueFloating(val);
+                            }
+
+                        }
+
+                    };
+
+                    /*
+                     * This is called when a user moves a finger on the element.
+                     */
+                    var touchMoveListener = function (e) {
+                        const btn = knob._mousebutton;
+
+                        /*
+                         * Only process event, if mouse button is depressed.
+                         */
+                        if (btn) {
+                            const properties = knob._properties;
+                            const readonly = properties.readonly;
+
+                            /*
+                             * If knob is not read-only, process touch event.
+                             */
+                            if (!readonly) {
+                                const touches = e.targetTouches;
+                                const numTouches = touches.length;
+                                const singleTouch = (numTouches === 1);
+
+                                /*
+                                 * Only process single touches, not multi-touch
+                                 * gestures.
+                                 */
+                                if (singleTouch) {
+                                    e.preventDefault();
+                                    const val = touchEventToValue(e, properties);
+                                    knob.setValueFloating(val);
+                                }
+
+                            }
+
+                        }
+
+                    };
+
+                    /*
+                     * This is called when a user lifts a finger off the element.
+                     */
+                    const touchEndListener = function (e) {
+                        const btn = knob._mousebutton;
+
+                        /*
+                         * Only process event, if mouse button was depressed.
+                         */
+                        if (btn) {
+                            const properties = knob._properties;
+                            const readonly = properties.readonly;
+
+                            /*
+                             * If knob is not read only, process touch event.
+                             */
+                            if (!readonly) {
+                                const touches = e.targetTouches;
+                                const numTouches = touches.length;
+                                const noMoreTouches = (numTouches === 0);
+
+                                /*
+                                 * Only commit value after the last finger has
+                                 * been lifted off.
+                                 */
+                                if (noMoreTouches) {
+                                    e.preventDefault();
+                                    knob._mousebutton = false;
+                                    knob.commit();
+                                }
+
+                            }
+
+                        }
+
+                        knob._mousebutton = false;
+                    };
+
+                    /*
+                     * This is called when a user cancels a touch action.
+                     */
+                    const touchCancelListener = function (e) {
+                        const btn = knob._mousebutton;
+
+                        /*
+                         * Abort action if mouse button was depressed.
+                         */
+                        if (btn) {
+                            knob.abort();
+                            knob._touchCount = 0;
+                            const timeout = knob._timeoutDoubleTap;
+                            window.clearTimeout(timeout);
+                        }
+
+                        knob._mousebutton = false;
+                    };
+
+                    /*
+                     * This is called when the size of the canvas changes.
+                     */
+                    const resizeListener = function (e) {
+                        knob.redraw();
+                    };
+
+                    /*
+                     * This is called when the mouse wheel is moved.
+                     */
+                    const scrollListener = function (e) {
+                        const readonly = knob.getProperty('readonly');
+
+                        /*
+                         * If knob is not read only, process mouse wheel event.
+                         */
+                        if (!readonly) {
+                            e.preventDefault();
+                            const delta = e.deltaY;
+                            const direction = delta > 0 ? 1 : (delta < 0 ? -1 : 0);
+                            let val = knob.getValue();
+                            val += direction;
+                            knob.setValueFloating(val);
+
+                            /*
+                             * Perform delayed commit.
+                             */
+                            const commit = function () {
+                                knob.commit();
+                            };
+
+                            let timeout = knob._timeout;
+                            window.clearTimeout(timeout);
+                            timeout = window.setTimeout(commit, 250);
+                            knob._timeout = timeout;
+                        }
+
+                    };
+
+                    /*
+                     * This is called when the user presses a key on the keyboard.
+                     */
+                    const keyDownListener = function (e) {
+                        const k = e.key;
+
+                        /*
+                         * Hide input element when user presses enter or escape.
+                         */
+                        if ((k === 'Enter') || (k === 'Escape')) {
+                            const inputDiv = knob._inputDiv;
+                            inputDiv.style.display = 'none';
+                            const input = e.target;
+
+                            /*
+                             * Only evaluate value when user pressed enter.
+                             */
+                            if (k === 'Enter') {
+                                const properties = knob._properties;
+                                const value = input.value;
+                                const stringToValue = properties.fnStringToValue;
+                                const val = stringToValue(value);
+                                const valid = isFinite(val);
+
+                                /*
+                                 * Check if input is a valid number.
+                                 */
+                                if (valid) {
+                                    knob.setValue(val);
+                                }
+                            }
+                            input.value = '';
+                        }
+                    };
+
+                    /*
+                     * Listen for device pixel ratio changes.
+                     */
+                    const updatePixelRatio = function () {
+                        const pixelRatio = window.devicePixelRatio;
+                        knob.redraw();
+                        const pixelRatioString = pixelRatio.toString();
+                        const matcher = '(resolution:' + pixelRatioString + 'dppx)';
+
+                        const params = {
+                            'once': true
+                        };
+                        window.matchMedia(matcher).addEventListener('change', updatePixelRatio, params);
+                    }
+                    canvas.addEventListener('dblclick', doubleClickListener);
+                    canvas.addEventListener('mousedown', mouseDownListener);
+                    canvas.addEventListener('mouseleave', mouseCancelListener);
+                    canvas.addEventListener('mousemove', mouseMoveListener);
+                    canvas.addEventListener('mouseup', mouseUpListener);
+                    canvas.addEventListener('resize', resizeListener);
+                    canvas.addEventListener('touchstart', touchStartListener);
+                    canvas.addEventListener('touchmove', touchMoveListener);
+                    canvas.addEventListener('touchend', touchEndListener);
+                    canvas.addEventListener('touchcancel', touchCancelListener);
+                    canvas.addEventListener('wheel', scrollListener);
+                    input.addEventListener('keydown', keyDownListener);
+                    updatePixelRatio();
+                    return knob;
+                };
+
+            }
+            return new PureKnob();
+        }));
+    </script>
+    <!-- UI script -->
+    <script>
+        let keg1 = keg2 = keg3 = 0; // Global values for gauges
+        let keg1title, keg1_abv, keg1_exp, keg1_style, keg1_ing;
+        let keg2title, keg2_abv, keg2_exp, keg2_style, keg2_ing;
+        let keg3title, keg3_abv, keg3_exp, keg3_style, keg3_ing;
+        let keg4title, keg4_abv, keg4_exp, keg4_style, keg4_ing;
+        let title, knob1, knob2, knob3, knob4;
+
+        async function getV0() {
+            const res = await fetch('api-routes')
+            keg1 = await res.json();
+            knob1.setValue(keg1);
+        }
+
+        async function getV1() {
+            const res = await fetch('api-routes')
+            keg2 = await res.json();
+            knob2.setValue(keg2);
+        }
+
+        async function getV2() {
+            const res = await fetch('api-routes')
+            keg3 = await res.json();
+            knob3.setValue(keg3);
+        }
+
+        function initialise() {
+            $('#Save').hide();
+            $('#Edit').hide();
+            $('#title').hide();
+            $('#keg1_style').hide();
+            $('#keg2_style').hide();
+            $('#keg3_style').hide();
+            $('#keg4_style').hide();
+            $('#keg1_style_label').hide();
+            $('#keg2_style_label').hide();
+            $('#keg3_style_label').hide();
+            $('#keg4_style_label').hide();
+            $('#kegnum').hide();
+            $('#kegnum_label').hide();
+            $(".loading").hide();
+            $(".keg").hide();
+            $(".loading").show("fast", "swing");
+            $('#keg1_style_cont').hide();
+            $('#keg2_style_cont').hide();
+            $('#keg3_style_cont').hide();
+            $('#keg4_style_cont').hide();
+        }
+
+        function show_kegs() {
+            $('#keg1, #keg2, #keg3, #keg4').hide();
+            let count = localStorage.getItem("kegnum");
+            if (count >= 1) {
+                $('#keg1').show();
+            }
+
+            if (count >= 2) {
+                $('#keg2').show();
+            }
+
+            if (count >= 3) {
+                $('#keg3').show();
+            }
+
+            if (count >= 4) {
+                $('#keg4').show();
+            }
+
+            if (count <= 2) {
+                $(".keg").height(220)
+            }
+            if (count == 3) {
+                $(".keg").height(180)
+            }
+            if (count == 4) {
+                $(".keg").height(132)
+            }
+        }
+
+        function hide_loading() {
+            $(".loading").hide("slow", "swing");
+            $('#Edit').show("slow", "swing");
+            $('#title').show("slow", "swing");
+            show_kegs();
+        }
+
+        function saveElements() {
+            // Save values to local storage
+            localStorage.setItem("title", $("#title").html());
+            localStorage.setItem("keg1title", $("#keg1title").html());
+            localStorage.setItem("keg1_abv", $("#keg1_abv").html());
+            localStorage.setItem("keg1_exp", $("#keg1_exp").html());
+            localStorage.setItem("keg1_style", $("#keg1_style").val());
+            localStorage.setItem("keg1_ing", $("#keg1_ing").html());
+            localStorage.setItem("keg2title", $("#keg2title").html());
+            localStorage.setItem("keg2_abv", $("#keg2_abv").html());
+            localStorage.setItem("keg2_exp", $("#keg2_exp").html());
+            localStorage.setItem("keg2_style", $("#keg2_style").val());
+            localStorage.setItem("keg2_ing", $("#keg2_ing").html());
+            localStorage.setItem("keg3title", $("#keg3title").html());
+            localStorage.setItem("keg3_abv", $("#keg3_abv").html());
+            localStorage.setItem("keg3_exp", $("#keg3_exp").html());
+            localStorage.setItem("keg3_style", $("#keg3_style").val());
+            localStorage.setItem("keg3_ing", $("#keg3_ing").html());
+            localStorage.setItem("keg4title", $("#keg4title").html());
+            localStorage.setItem("keg4_abv", $("#keg4_abv").html());
+            localStorage.setItem("keg4_exp", $("#keg4_exp").html());
+            localStorage.setItem("keg4_style", $("#keg4_style").val());
+            localStorage.setItem("keg4_ing", $("#keg4_ing").html());
+            localStorage.setItem("kegnum", $("#kegnum").val());
+        }
+
+        function assignElements() {
+            $("#title").html(localStorage.getItem("title"));
+            $("#keg1title").html(localStorage.getItem("keg1title"));
+            $("#keg1_abv").html(localStorage.getItem("keg1_abv"));
+            $("#keg1_exp").html(localStorage.getItem("keg1_exp"));
+            $("#keg1_ing").html(localStorage.getItem("keg1_ing"));
+            $("#keg2title").html(localStorage.getItem("keg2title"));
+            $("#keg2_abv").html(localStorage.getItem("keg2_abv"));
+            $("#keg2_exp").html(localStorage.getItem("keg2_exp"));
+            $("#keg2_ing").html(localStorage.getItem("keg2_ing"));
+            $("#keg3title").html(localStorage.getItem("keg3title"));
+            $("#keg3_abv").html(localStorage.getItem("keg3_abv"));
+            $("#keg3_exp").html(localStorage.getItem("keg3_exp"));
+            $("#keg3_ing").html(localStorage.getItem("keg3_ing"));
+            $("#keg4title").html(localStorage.getItem("keg4title"));
+            $("#keg4_abv").html(localStorage.getItem("keg4_abv"));
+            $("#keg4_exp").html(localStorage.getItem("keg4_exp"));
+            $("#keg4_ing").html(localStorage.getItem("keg4_ing"));
+            $("#keg1_style").val(localStorage.getItem("keg1_style"));
+            $("#keg2_style").val(localStorage.getItem("keg2_style"));
+            $("#keg3_style").val(localStorage.getItem("keg3_style"));
+            $("#keg4_style").val(localStorage.getItem("keg4_style"));
+            $("#kegnum").val(localStorage.getItem("kegnum"));
+
+            if (localStorage.getItem("keg1_style") == 1) {
+                $("#keg1_icon").attr("src", "lager.png");
+            } else if (localStorage.getItem("keg1_style") == 2) {
+                $("#keg1_icon").attr("src", "amber.png");
+            } else if (localStorage.getItem("keg1_style") == 3) {
+                $("#keg1_icon").attr("src", "stout.png");
+            } else if (localStorage.getItem("keg1_style") == 4) {
+                $("#keg1_icon").attr("src", "neipa.png");
+            } else if (localStorage.getItem("keg1_style") == 5) {
+                $("#keg1_icon").attr("src", "seltz.png");
+            }
+
+            if (localStorage.getItem("keg2_style") == 1) {
+                $("#keg2_icon").attr("src", "lager.png");
+            } else if (localStorage.getItem("keg2_style") == 2) {
+                $("#keg2_icon").attr("src", "amber.png");
+            } else if (localStorage.getItem("keg2_style") == 3) {
+                $("#keg2_icon").attr("src", "stout.png");
+            } else if (localStorage.getItem("keg2_style") == 4) {
+                $("#keg2_icon").attr("src", "neipa.png");
+            } else if (localStorage.getItem("keg2_style") == 5) {
+                $("#keg2_icon").attr("src", "seltz.png");
+            }
+
+            if (localStorage.getItem("keg3_style") == 1) {
+                $("#keg3_icon").attr("src", "lager.png");
+            } else if (localStorage.getItem("keg3_style") == 2) {
+                $("#keg3_icon").attr("src", "amber.png");
+            } else if (localStorage.getItem("keg3_style") == 3) {
+                $("#keg3_icon").attr("src", "stout.png");
+            } else if (localStorage.getItem("keg3_style") == 4) {
+                $("#keg3_icon").attr("src", "neipa.png");
+            } else if (localStorage.getItem("keg3_style") == 5) {
+                $("#keg3_icon").attr("src", "seltz.png");
+            }
+
+            if (localStorage.getItem("keg4_style") == 1) {
+                $("#keg4_icon").attr("src", "lager.png");
+            } else if (localStorage.getItem("keg4_style") == 2) {
+                $("#keg4_icon").attr("src", "amber.png");
+            } else if (localStorage.getItem("keg4_style") == 3) {
+                $("#keg4_icon").attr("src", "stout.png");
+            } else if (localStorage.getItem("keg4_style") == 4) {
+                $("#keg4_icon").attr("src", "neipa.png");
+            } else if (localStorage.getItem("keg4_style") == 5) {
+                $("#keg4_icon").attr("src", "seltz.png");
+            }
+        }
+
+        function reSizeGauges() {
+            let size; // default
+            let count = parseInt(localStorage.getItem("kegnum"));
+            if (screen.width >= 400) {
+                switch (count) {
+                    case 1:
+                        size = 160;
+                        break;
+                    case 2:
+                        size = 160;
+                        break;
+                    case 3:
+                        size = 130;
+                        break;
+                    case 4:
+                        size = 90;
+                        break;
+                }
+            }
+            knob1 = pureknob.createKnob(size, size);
+            knob2 = pureknob.createKnob(size, size);
+            knob3 = pureknob.createKnob(size, size);
+            knob4 = pureknob.createKnob(size, size);
+            // Gauge 1
+            var gauge1 = knob1.node();
+            var elem = document.getElementById('gauge1');
+            var prevGauge = elem.firstChild;
+            elem.replaceChild(gauge1, prevGauge);
+
+            // Gauge 2
+            var gauge2 = knob2.node();
+            var elem = document.getElementById('gauge2');
+            var prevGauge = elem.firstChild;
+            elem.replaceChild(gauge2, prevGauge);
+
+            // Gauge 3
+            var gauge3 = knob3.node();
+            var elem = document.getElementById('gauge3');
+            var prevGauge = elem.firstChild;
+            elem.replaceChild(gauge3, prevGauge);
+
+            // Gauge 4
+            var gauge4 = knob4.node();
+            var elem = document.getElementById('gauge4');
+            var prevGauge = elem.firstChild;
+            elem.replaceChild(gauge4, prevGauge);
+        }
+
+        function build_gauges() {
+            let size; // default
+            let count = parseInt(localStorage.getItem("kegnum"));
+            if (screen.width >= 400) {
+                switch (count) {
+                    case 1:
+                        size = 160;
+                        break;
+                    case 2:
+                        size = 160;
+                        break;
+                    case 3:
+                        size = 130;
+                        break;
+                    case 4:
+                        size = 80;
+                        break;
+                }
+            }
+            knob1 = pureknob.createKnob(size, size);
+            knob2 = pureknob.createKnob(size, size);
+            knob3 = pureknob.createKnob(size, size);
+            knob4 = pureknob.createKnob(size, size);
+            console.log('creating');
+            // Gauge 1
+            var gauge1 = knob1.node();
+            var elem = document.getElementById('gauge1');
+            elem.appendChild(gauge1);
+
+            // Gauge 2
+            var gauge2 = knob2.node();
+            var elem = document.getElementById('gauge2');
+            elem.appendChild(gauge2);
+
+            // Gauge 3
+            var gauge3 = knob3.node();
+            var elem = document.getElementById('gauge3');
+            elem.appendChild(gauge3);
+
+            // Gauge 4
+            var gauge4 = knob4.node();
+            var elem = document.getElementById('gauge4');
+            elem.appendChild(gauge4);
+        }
+
+        $(function () {
+            initialise();
+
+            if (localStorage.getItem("title") != null) {
+                assignElements();
+            }
+
+            saveElements();
+            build_gauges();
+
+            setTimeout(function () {
+                hide_loading();
+                reSizeGauges();
+            }, 5000);
+
+            setInterval(getV0, 5000);
+            setInterval(getV1, 5000);
+            setInterval(getV2, 5000);
+
+            $('#Edit').click(function () {
+                $('#Save').show();
+                $('#Edit').hide();
+                $('#title').attr('contenteditable', 'true');
+                // Keg 1 fields
+                $('#keg1_style_label').show();
+                $('#keg1_style').show();
+                $('#keg1_style_cont').show();
+                $('#keg1title').attr('contenteditable', 'true');
+                $('#keg1_abv').attr('contenteditable', 'true');
+                $('#keg1_exp').attr('contenteditable', 'true');
+                $('#keg1_ing').attr('contenteditable', 'true');
+                // Keg 2 fields
+                $('#keg2_style_label').show();
+                $('#keg2_style').show();
+                $('#keg2_style_cont').show();
+                $('#keg2title').attr('contenteditable', 'true');
+                $('#keg2_abv').attr('contenteditable', 'true');
+                $('#keg2_exp').attr('contenteditable', 'true');
+                $('#keg2_ing').attr('contenteditable', 'true');
+                // Keg 3 fields
+                $('#keg3_style_label').show();
+                $('#keg3_style').show();
+                $('#keg3_style_cont').show();
+                $('#keg3title').attr('contenteditable', 'true');
+                $('#keg3_abv').attr('contenteditable', 'true');
+                $('#keg3_exp').attr('contenteditable', 'true');
+                $('#keg3_ing').attr('contenteditable', 'true');
+                // Keg 4 fields
+                $('#keg4_style_label').show();
+                $('#keg4_style').show();
+                $('#keg4_style_cont').show();
+                $('#keg4title').attr('contenteditable', 'true');
+                $('#keg4_abv').attr('contenteditable', 'true');
+                $('#keg4_exp').attr('contenteditable', 'true');
+                $('#keg4_ing').attr('contenteditable', 'true');
+                $('#kegnum').show();
+                $('#kegnum_label').show();
+            });
+
+            $('#Save').click(function () {
+                $('#Save').hide();
+                $('#Edit').show();
+                $('#title').attr('contenteditable', 'false');
+                // Keg 1 fields
+                $('#keg1_style_label').hide();
+                $('#keg1_style').hide();
+                $('#keg1title').attr('contenteditable', 'false');
+                $('#keg1_abv').attr('contenteditable', 'false');
+                $('#keg1_exp').attr('contenteditable', 'false');
+                $('#keg1_ing').attr('contenteditable', 'false');
+                $('#keg1_style_cont').hide();
+                // Keg 2 fields
+                $('#keg2_style_label').hide();
+                $('#keg2_style').hide();
+                $('#keg2title').attr('contenteditable', 'false');
+                $('#keg2_abv').attr('contenteditable', 'false');
+                $('#keg2_exp').attr('contenteditable', 'false');
+                $('#keg2_ing').attr('contenteditable', 'false');
+                $('#keg2_style_cont').hide();
+                // Keg 3 fields
+                $('#keg3_style_label').hide();
+                $('#keg3_style').hide();
+                $('#keg3title').attr('contenteditable', 'false');
+                $('#keg3_abv').attr('contenteditable', 'false');
+                $('#keg3_exp').attr('contenteditable', 'false');
+                $('#keg3_ing').attr('contenteditable', 'false');
+                $('#keg3_style_cont').hide();
+                // Keg 4 fields
+                $('#keg4_style_label').hide();
+                $('#keg4_style').hide();
+                $('#keg4title').attr('contenteditable', 'false');
+                $('#keg4_abv').attr('contenteditable', 'false');
+                $('#keg4_exp').attr('contenteditable', 'false');
+                $('#keg4_ing').attr('contenteditable', 'false');
+                $('#keg4_style_cont').hide();
+                $('#kegnum').hide();
+                $('#kegnum_label').hide();
+                saveElements();
+                assignElements();
+                reSizeGauges();
+                show_kegs();
+            });
+        });
+    </script>
+</body>
+
+</html>

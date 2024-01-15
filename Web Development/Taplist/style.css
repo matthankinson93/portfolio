@@ -1,0 +1,43 @@
+@media only screen and (max-width: 500px) {
+
+    p,
+    h3,
+    h4,
+    img,
+    button {
+        font-size: 0.7rem;
+    }
+
+    #loadcontainer {
+        width: 200rem;
+    }
+
+    #loadimg {
+        width: 200rem;
+    }
+}
+
+
+body {
+    background-color: #241e1e;
+    background-image: url("hops2.jpg");
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-family: 'Oswald', sans-serif;
+}
+
+h1 {
+    color: #f6c101;
+}
+
+h3 {
+    background-color: rgba(0, 0, 0, 1);
+    color: #f6c101;
+}
+
+.keg {
+    background-color: rgba(0, 0, 0, 0.5);
+    height: 24%;
+    margin: 0 !important;
+}
