@@ -1,0 +1,39 @@
+<div class="container">
+    <h1 class="heading">Field devices overview</h1>
+    <div class="content">
+      <mat-card class="card">
+        <h2 class="sub-heading">Devices</h2>
+        <mat-list>
+          <mat-list-item *ngFor="let device of devices">
+            <button mat-button (click)="openDetailDialog(device)">
+              <div mat-line>{{ device.name }}</div>
+            </button>
+          </mat-list-item>
+        </mat-list>
+        <button mat-stroked-button (click)="openCreateDeviceDialog()">Create New Device</button>
+      </mat-card>
+
+      <mat-card class="card">
+        <h2 class="sub-heading">Users</h2>
+        <mat-list>
+          <mat-list-item *ngFor="let user of users">
+            <div mat-line>{{ user.email }}  <span [ngClass]="{'inactive-user': !user.active}">
+              {{ !user.active ? '(inactive)' : '' }}
+            </span></div>
+          </mat-list-item>
+        </mat-list>
+      </mat-card>
+    </div>
+  
+    <mat-card class="invite-card">
+      <h2 class="sub-heading">Invite New User</h2>
+      <form #inviteUserForm="ngForm" (ngSubmit)="inviteUser(inviteUserForm)">
+        <mat-form-field appearance="fill">
+          <mat-label>Email address</mat-label>
+          <input matInput placeholder="Enter an email" name="email" [(ngModel)]="newUser.email" required #email="ngModel">
+        </mat-form-field>
+        <button mat-stroked-button type="submit" [disabled]="inviteUserForm.invalid">Invite</button>
+      </form>
+    </mat-card>
+    
+  </div>

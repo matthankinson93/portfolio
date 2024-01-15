@@ -1,0 +1,43 @@
+.container {
+    text-align: center;
+    margin: 10vh;
+    margin-top: 3vh;
+  }
+  
+  .heading {
+    margin-bottom: 4vh;
+  }
+  
+  .content {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 3vh;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .card {
+    width: calc(49%);
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5vh;
+  }
+  
+  .invite-card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5vh;
+    width: 59%;
+    margin: auto;
+  }
+
+  .inactive-user {
+    font-size: 0.8em;
+    color: grey;
+  }

@@ -1,0 +1,19 @@
+<h1 mat-dialog-title>Create New Device</h1>
+<div mat-dialog-content class="card">
+  <form #deviceForm="ngForm" (ngSubmit)="createDevice()">
+    <mat-form-field>
+      <mat-label>Device Name</mat-label>
+      <input matInput name="name" [(ngModel)]="device.name" #deviceName="ngModel" required>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Owner</mat-label>
+      <mat-select name="owner_id" [(ngModel)]="device.owner_id" #owner="ngModel" required>
+        <mat-option *ngFor="let user of users" [value]="user.user_id">{{ user.email }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div mat-dialog-actions class="btn">
+      <button mat-raised-button color="warn" (click)="onNoClick()">Cancel</button>
+      <button mat-stroked-button color="primary" type="submit" [disabled]="!deviceForm.form.valid">Create</button>
+    </div>
+  </form>
+</div>
