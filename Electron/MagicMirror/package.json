@@ -1,7 +1,7 @@
 {
 	"name": "magicmirror",
 	"version": "2.24.0",
-	"description": "The open source modular smart mirror platform.",
+	"description": "modular smart mirror.",
 	"main": "js/electron.js",
 	"scripts": {
 		"start": "DISPLAY=\"${DISPLAY:=:0}\" ./node_modules/.bin/electron js/electron.js",
@@ -39,15 +39,6 @@
 		"mirror UI",
 		"modular"
 	],
-	"author": "Michael Teeuw",
-	"contributors": [
-		"https://github.com/MichMich/MagicMirror/graphs/contributors"
-	],
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/MichMich/MagicMirror/issues"
-	},
-	"homepage": "https://magicmirror.builders",
 	"devDependencies": {
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-import": "^2.27.5",
