@@ -22,7 +22,7 @@ ensure a '.service' file exists for a unix based server.
 a setup script exists at './setup-services.sh'
 ensure permissions are set first by running 'chmod +x setup-services.sh'
 
-### API ROUTES:
+## API ROUTES:
 
 #### Login service
 'baseURL/api/login'
