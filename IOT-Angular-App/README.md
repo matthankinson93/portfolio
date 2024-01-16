@@ -4,6 +4,7 @@
 
 #### Postgres:
 macOS: 'brew services start postgresql'
+
 Linux/Unix: 'pg_ctl -D /path/to/your/postgresql/data/directory start' - where '/path/to/your/postgresql' is the location or docker of your postgres database.
 
 #### Front end application:
