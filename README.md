@@ -6,7 +6,7 @@
 
 #### IOT-Angular-App
 Full-stack web application built using Angular 2 for the front-end, NodeJS for the back-end, and postgreSQL for the database.
-See directory for further instructions and details.
+Application features full API routing, JWT authentication, and device credential generation for IoT device integrations following RESTful API architecture.
 
 #### Electron/MagicMirror
 Application built using electron to act as a smart-mirror for UNIX based operating systems.
