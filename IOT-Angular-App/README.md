@@ -13,6 +13,7 @@ Navigate to http://localhost:4200/. The application will automatically reload if
 
 #### Back end / express server
 run 'npm start' from the root directory.
+run 'ps aux | grep node' to verify
 
 ## Starting a production environment:
 
@@ -24,22 +25,22 @@ ensure permissions are set first by running 'chmod +x setup-services.sh'
 ### API ROUTES:
 
 #### Login service
-baseURL/api/login
+'baseURL/api/login'
 
 #### User service
-baseURL/api/users
+'baseURL/api/users'
 
 #### Device service
-baseURL/api/devices
+'baseURL/api/devices'
 
 #### Telemtry handler
-baseURL'/api/telemetry
+'baseURL'/api/telemetry'
 
 ### Posting telemetry examples
 In order to post telemetry, a device must be created, and the auth token saved for the API endpoint.
 
 #### CURL:
-curl -X POST http://localhost:3000/api/telemetry/saveTelemetry \
+curl -X POST http://baseURL/api/telemetry/saveTelemetry \
      -H "Authorization: Bearer auth_token" \
      -H "Content-Type: application/json" \
      -d '{"key": "temperature", "value": "25", "ts": "1705402416000"}'
