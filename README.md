@@ -1,20 +1,28 @@
 # Mathew Hankinson portfolio.
 
- ### To demonstrate the basic concepts of full-stack web development, I have built a basic IOT / remote telemetry portal utilizing 3 different tech stacks:
+ ### To demonstrate some project & sofwtware development experience please see below projects:
 
-- Angular_node - this is built using the Angular framework for the front end, expressJs for the back end, and integrates with a postgres SQL database.
-- Django_brython - this is built using Brython for the front end and django for the backend.
-- Blazor_cSharp - this is built using the ASP.NET framework.
+#### To see additional details and setup steps, please browse each directory.
 
-### The purpose of this is to demonstrate important concepts applied across a different range of frameworks.
+#### IOT-Angular-App
+Full-stack web application built using Angular 2 for the front-end, NodeJS for the back-end, and postgreSQL for the database.
+See directory for further instructions and details.
 
-### The functionality of this application includes:
+#### Electron/MagicMirror
+Application built using electron to act as a smart-mirror for UNIX based operating systems.
+Application features various third-party API modules including real-time weather, IoT information from Blynk, and voice activated chatGPT3.5 interaction.
 
-- Login authentication using JWT.
-- Adding a new device, which generates a unique UUID, authentication token, and name.
-- Adding new users via email.
-- Viewing device telemetry (latest values, and timeseries data).
-- Api endpoints for posting device telemetry to the application.
+#### PHP/Support-DB
+Full stack web application built utilising PHP and MySQL
 
+#### MCU
+Various bare-metal MCU projects (non-production / retail) for Xtensa CPUs built in C++.
 
-To see more framework version, please view the README of each directory.
+#### Web Development/Taplist
+A static/serverless web page built for small brewery / home brewery owners.
+
+#### C# Trading Bot
+A automated trading bot built on the CAlgo API in C#.
+
+#### PLC-BASIC
+Projects related to PLC development as covered in "ELE1301 Computer Engineering"
