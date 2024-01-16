@@ -26,3 +26,6 @@ A automated trading bot built on the CAlgo API in C#.
 
 #### PLC-BASIC
 Projects related to PLC development as covered in "ELE1301 Computer Engineering"
+
+### Web development:
+Website built for local floral designer: https://www.peonyproject.au/
