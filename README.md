@@ -18,8 +18,6 @@ Full stack web application built utilising PHP and MySQL
 #### MCU
 Various bare-metal MCU projects (not released) for Xtensa CPUs built in C++.
 
-#### Web Development/Taplist
-A static/serverless web page built for small brewery / home brewery owners.
 
 #### C# Trading Bot
 A automated trading bot built on the CAlgo API in C#.
@@ -33,5 +31,7 @@ Various data structures and sorting algorithms as required for core DSA computer
 #### Python
 Various database and API scripts for cloud servers following the SwaggerUI RestfulAPI endpoint architecture.
 
-### Web development:
-Website built for local floral designer: https://www.peonyproject.au/
+#### Web Development/Taplist
+A static/serverless web page built for small brewery / home brewery owners.
+
+Also, a website built for local floral designer: https://www.peonyproject.au/
