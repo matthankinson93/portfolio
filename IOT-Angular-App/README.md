@@ -61,3 +61,25 @@ data = {
 
 response = requests.post(url, json=data, headers=headers)
 print(response.json())
+
+
+## Demonstrations
+
+#### Login Screen for authenticated users:
+
+![image](https://github.com/matthankinson93/portfolio/assets/102736018/cc40af11-c67c-48f9-9f7a-688c2a7c5e89)
+
+#### Entities overview:
+
+![image](https://github.com/matthankinson93/portfolio/assets/102736018/76ad8a7f-54db-44f6-8298-3296dfd70a8b)
+
+#### Creating a new device:
+
+![image](https://github.com/matthankinson93/portfolio/assets/102736018/1405761e-1fea-4248-bd56-d00272ac3813)
+
+#### Viewing a device's telemetry, latest values, and authentication information:
+
+![image](https://github.com/matthankinson93/portfolio/assets/102736018/b5fe2628-3ce7-45f2-8349-459103d5845e)
+
+
+
