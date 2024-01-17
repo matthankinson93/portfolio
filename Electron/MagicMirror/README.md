@@ -21,6 +21,6 @@ OpenAI prompt for voice activated AI interaction using the "Web-Speech" API http
 
 ![image](https://github.com/matthankinson93/portfolio/assets/102736018/f75014e6-2987-4af4-9a8e-7ee973e9401e)
 
-#### Magic Mirror with returned prompt tokens from OpenAI API ('tell em how to make a black russian cocktail'):
+#### Magic Mirror with returned prompt tokens from OpenAI API ('tell me how to make a black russian cocktail'):
 
 ![image](https://github.com/matthankinson93/portfolio/assets/102736018/d9877046-fe02-42ee-9c67-cadb914e831b)
