@@ -10,7 +10,7 @@ Application features full API routing, JWT authentication, and device credential
 
 #### Electron/MagicMirror
 Application built using electron to act as a smart-mirror for UNIX based operating systems.
-Application features various third-party API modules including real-time weather, IoT information from Blynk, and voice activated chatGPT3.5 interaction.
+Application features various third-party API modules including real-time weather, IoT information from Blynk, and voice activated AI interaction.
 
 #### PHP/Support-DB
 Full stack web application built utilising PHP and MySQL
