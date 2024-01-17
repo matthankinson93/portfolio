@@ -5,7 +5,7 @@
 #### To see additional details and setup steps, please browse each directory.
 
 #### IOT-Angular-App
-Full-stack web application built using Angular 2 for the front-end, expressJS (nodeJs) for the back-end, and postgres SQL for the database.
+Full-stack web application built using Angular 2 for the front-end, expressJS (nodeJs) for the back-end, and PostgreSQL for the database.
 Application features full API routing, JWT authentication, and device credential generation for IoT device integrations following RESTful API architecture.
 
 #### Electron/MagicMirror
@@ -16,7 +16,7 @@ Application features various third-party API modules including real-time weather
 Full stack web application built utilising PHP and MySQL
 
 #### MCU
-Various bare-metal MCU projects (non-production / retail) for Xtensa CPUs built in C++.
+Various bare-metal MCU projects (not released) for Xtensa CPUs built in C++.
 
 #### Web Development/Taplist
 A static/serverless web page built for small brewery / home brewery owners.
