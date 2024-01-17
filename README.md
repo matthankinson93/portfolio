@@ -30,5 +30,8 @@ Projects related to PLC development as covered in "ELE1301 Computer Engineering"
 #### C++
 Various data structures and sorting algorithms as required for core DSA computer science unit. Features Standard Template Library for modern C++.
 
+#### Python
+Various database and API scripts for cloud servers following the SwaggerUI RestfulAPI endpoint architecture.
+
 ### Web development:
 Website built for local floral designer: https://www.peonyproject.au/
