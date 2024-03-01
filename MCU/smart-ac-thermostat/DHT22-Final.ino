@@ -38,9 +38,10 @@ uint64_t IR_OFF[] = {0x20004000E05FC3, 0x6705000000};
 void setup()
 {
   Serial.begin(9600);
-  // irrecv.enableIRIn();
+
   IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
   IrSender.begin(IR_SEND_PIN, ENABLE_LED_FEEDBACK, 0);
+
   connectToWiFi();
   Blynk.config(BLYNK_AUTH_TOKEN);
   dht.begin();
@@ -72,19 +73,15 @@ void readIR()
 {
   if (IrReceiver.decode())
   {
-    Serial.print("Old: ");
-    Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX); // Print "old" raw data
-    Serial.print("Complete: ");
-    IrReceiver.printIRResultShort(&Serial); // Print complete received data in one line
-    Serial.print("To Send: ");
-    IrReceiver.printIRSendUsage(&Serial); // Print the statement required to send this data
-    IrReceiver.resume();                  // Enable receiving of the next value
+    Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX);
+    IrReceiver.printIRResultShort(&Serial);
+    IrReceiver.printIRSendUsage(&Serial); // Print the IR string required to send this value.
+    IrReceiver.resume();
   }
 }
 
 void sensorDataSend()
 {
-  // Get the temperature from DHT22
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
   // Handle the data if the readings are valid via ESP32 -> Blynk
@@ -92,12 +89,6 @@ void sensorDataSend()
   {
     Blynk.virtualWrite(V0, temperature);
     Blynk.virtualWrite(V1, humidity);
-    Serial.print("Temperature: ");
-    Serial.print(temperature);
-    Serial.println(" °C");
-    Serial.print("Humidity: ");
-    Serial.print(humidity);
-    Serial.println(" %");
 
     loopCount++;
     if (loopCount % 12 == 0)
@@ -127,9 +118,6 @@ void sensorDataSend()
     {
       average = sum / count;
       Blynk.virtualWrite(V2, average);
-      Serial.print("Average: ");
-      Serial.print(average);
-      Serial.println(" °C");
     }
     else
     {
@@ -153,27 +141,22 @@ void getDateString()
   }
   else
   {
-    char timeString[50]; // Buffer to store the formatted time string
+    char timeString[25];
     strftime(timeString, sizeof(timeString), "%H:%M:%S %d/%m/%Y", &timeinfo);
-    Serial.println(timeString);
     Blynk.virtualWrite(V3, timeString);
   }
 }
 
 void onAC()
 {
-  Serial.println("Sending IR 'ON' CMD...");
   Serial.flush();
   IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4550, 550, 1700, 550, 550, &IR_ON[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 1);
-  Serial.println("IR ON' Sent.");
 }
 
 void offAC()
 {
-  Serial.println("Sending IR 'OFF' CMD...");
   Serial.flush();
   IrSender.sendPulseDistanceWidthFromArray(38, 9000, 4550, 550, 1700, 550, 550, &IR_OFF[0], 104, PROTOCOL_IS_LSB_FIRST, 0, 1);
-  Serial.println("IR 'OFF' Sent.");
 }
 
 // Blynk definitions
@@ -185,15 +168,11 @@ void BlynkOnConnected()
 BLYNK_WRITE(V4)
 {
   tempSet = param.asInt();
-  Serial.println("tempSet: ");
-  Serial.println(tempSet);
 }
 
 BLYNK_WRITE(V5)
 {
   tempVar = param.asInt();
-  Serial.println("tempVar: ");
-  Serial.println(tempVar);
 }
 
 BLYNK_WRITE(V6)
@@ -219,8 +198,6 @@ BLYNK_WRITE(V7)
   {
     coolingMode = 0;
   }
-  Serial.println("coolingMode: ");
-  Serial.println(coolingMode);
 }
 
 void setAC(float temperature)
